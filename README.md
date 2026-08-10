@@ -128,7 +128,7 @@ mymllib/
 ## Setup
 
 ```bash
-git clone https://github.com/nirlepmakwana/mymllib.git
+git clone https://github.com/nirlep1204/mymllib.git
 cd mymllib
 pip install -e .
 
