@@ -113,6 +113,7 @@ def main():
     plt.title("Empirical Complexity: Wall-Clock Time vs Sample Size")
     plt.xlabel("N (samples)")
     plt.ylabel("Time (seconds)")
+    plt.yscale('log') # Log scale to see the very fast algorithms!
     plt.legend(fontsize=8)
     plt.grid(True, ls='--', alpha=.5)
     plt.tight_layout()
