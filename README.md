@@ -143,6 +143,8 @@ python benchmarks/benchmark.py --sizes 100 200 500 1000
 
 ## Roadmap
 
+**Code Quality Note:** The library includes a `pytest` test suite covering all modules, with type annotations checked via `mypy` in CI.
+
 This library is still a work in progress. Here's what I'm planning next:
 
 - [ ] Convolutional layers for image tasks
