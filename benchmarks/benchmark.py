@@ -59,6 +59,15 @@ def time_it(name, n):
         elif name == 'Random Forest':
             m = ml.Forest(n_trees=10, max_depth=5, task='classify')
             m.fit(X_cls, y_cls)
+        elif name == 'Naive Bayes':
+            m = ml.GaussianNB()
+            m.fit(X_cls, y_cls)
+        elif name == 'KNN':
+            m = ml.KNN(k=3, task='classify')
+            m.fit(X_cls, y_cls)
+        elif name == 'Gradient Boost':
+            m = ml.GradientBoost(n_rounds=10, max_depth=3, task='classify')
+            m.fit(X_cls, y_cls)
     except Exception as e:
         print(f"  Warning: {name} failed at n={n}: {e}")
         return 0.0
@@ -83,6 +92,7 @@ def main():
     algos = [
         'Linear Regression', 'Logistic Regression', 'SVM',
         'Decision Tree', 'KMeans', 'PCA', 'Random Forest',
+        'Naive Bayes', 'KNN', 'Gradient Boost'
     ]
 
     results = {a: [] for a in algos}
