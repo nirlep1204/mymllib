@@ -16,7 +16,7 @@ class SVR:
         self.alpha = None
         self.b = 0.0
         self.X_train = None
-        self.losses = []
+        self.losses = [] # type: ignore
 
     def _kernel_matrix(self, X1, X2):
         if self.kernel == 'linear':
@@ -71,13 +71,13 @@ class SVR:
                 
                 weights -= self.lr * grad
             
-            self.weights = weights
-            self.X_train = X
+            self.weights = weights # type: ignore
+            self.X_train = X # type: ignore
         else:
             # Dual optimization for non-linear kernels
-            self.X_train = np.copy(X)
+            self.X_train = np.copy(X) # type: ignore
             K = self._kernel_matrix(X, X)
-            self.alpha = np.zeros(m)
+            self.alpha = np.zeros(m) # type: ignore
             self.b = 0.0
             
             for _ in range(self.max_iter):
@@ -91,7 +91,7 @@ class SVR:
                 loss_grad[mask_pos] = 1.0
                 loss_grad[mask_neg] = -1.0
                 
-                reg_loss = 0.5 * self.alpha.T @ K @ self.alpha
+                reg_loss = 0.5 * self.alpha.T @ K @ self.alpha # type: ignore
                 hinge_loss = self.C * np.mean(np.maximum(0, np.abs(error) - self.epsilon))
                 self.losses.append(reg_loss + hinge_loss)
                 

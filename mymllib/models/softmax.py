@@ -21,7 +21,7 @@ class Softmax:
         self.seed = seed
         self.weights = None
         self.classes = None
-        self.losses = []
+        self.losses = [] # type: ignore
 
     def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "Softmax":
         """Fit the model to the training data."""
@@ -39,15 +39,15 @@ class Softmax:
         m, n = X.shape
         X_b = np.c_[np.ones((m, 1)), X]
         
-        self.classes = np.unique(y)
-        k = len(self.classes)
+        self.classes = np.unique(y) # type: ignore
+        k = len(self.classes) # type: ignore
         
         # one-hot encode y
         Y = np.zeros((m, k))
-        for i, c in enumerate(self.classes):
+        for i, c in enumerate(self.classes): # type: ignore
             Y[:, i] = (y == c).astype(float)
             
-        self.weights = np.zeros((n + 1, k))
+        self.weights = np.zeros((n + 1, k)) # type: ignore
         self.losses = []
         rng = np.random.default_rng(self.seed)
 
@@ -99,4 +99,4 @@ class Softmax:
         """Predict class labels for samples in X."""
         probs = self.predict_proba(X)
         class_indices = np.argmax(probs, axis=1)
-        return self.classes[class_indices]
+        return self.classes[class_indices] # type: ignore

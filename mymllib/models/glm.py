@@ -11,7 +11,7 @@ class GLM:
         self.lr = lr
         self.max_iter = max_iter
         self.w: Any = None
-        self.losses: List[Any] = []
+        self.losses: List[Any] = [] # type: ignore
 
     def fit(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.DataFrame, pd.Series]) -> "GLM":
         """Fit the model using gradient descent."""

@@ -10,7 +10,7 @@ class Perceptron:
         self.max_iter = max_iter
         self.w: Any = None
         self.b: Any = None
-        self.errors: List[Any] = []
+        self.errors: List[Any] = [] # type: ignore
         self.classes: Any = None
         
     def fit(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.DataFrame, pd.Series]) -> "Perceptron":
@@ -18,9 +18,9 @@ class Perceptron:
         if isinstance(X, pd.DataFrame):
             X = X.values
         if isinstance(y, (pd.DataFrame, pd.Series)):
-            y = y.values
+            y = y.values # type: ignore
             
-        y = y.ravel()
+        y = y.ravel() # type: ignore
         if X.shape[0] != y.shape[0]:
             raise ValueError("X and y must have the same number of rows.")
             

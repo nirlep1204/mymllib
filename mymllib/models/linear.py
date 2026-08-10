@@ -22,7 +22,7 @@ class Linear:
         self.alpha = float(alpha)
         self.seed = int(seed) if seed is not None else None
         self.weights = None
-        self.losses = []
+        self.losses = [] # type: ignore
 
     @property
     def w(self) -> Optional[np.ndarray]:
@@ -67,7 +67,7 @@ class Linear:
             final_cost = (1 / (2 * m)) * np.sum((full_preds - y) ** 2)
             self.losses = [final_cost]
         elif self.method in ("gd", "gradient_descent"):
-            self.weights = np.zeros(n + 1)
+            self.weights = np.zeros(n + 1) # type: ignore
             
             # Record initial baseline loss before gradient steps
             init_preds = X_b @ self.weights
@@ -101,7 +101,7 @@ class Linear:
                         reg_grad[0] = 0
                         grad += reg_grad
                     elif self.reg == "l1":
-                        reg_grad = (self.alpha / k) * np.sign(self.weights)
+                        reg_grad = (self.alpha / k) * np.sign(self.weights) # type: ignore
                         reg_grad[0] = 0
                         grad += reg_grad
                     

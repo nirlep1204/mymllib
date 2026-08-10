@@ -46,7 +46,7 @@ class SVM:
         if hasattr(X, 'values'):
             X = X.values
         if hasattr(y, 'values'):
-            y = y.values
+            y = y.values # type: ignore
             
         self.classes_ = np.unique(y)
         if len(self.classes_) != 2:
@@ -147,7 +147,7 @@ class SVM:
         index = None
         if hasattr(X, 'values'):
             is_pandas = True
-            index = X.index
+            index = X.index # type: ignore
             X = X.values
             
         if self.support_vectors_ is None:

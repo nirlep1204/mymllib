@@ -7,11 +7,11 @@ class PCA:
     
     def __init__(self, n_components: int = 2) -> None:
         self.n_components = n_components
-        self.components = None
-        self.mean = None
-        self.eigenvalues = None
-        self.explained_variance = None
-        self._all_eigenvalues_sum = None
+        self.components: Optional[np.ndarray] = None
+        self.mean: Optional[np.ndarray] = None
+        self.eigenvalues: Optional[np.ndarray] = None
+        self.explained_variance: Optional[np.ndarray] = None
+        self._all_eigenvalues_sum: Optional[float] = None
 
     def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> "PCA":
         """Fit the PCA model on X."""
@@ -42,7 +42,7 @@ class PCA:
         """Apply dimensionality reduction to X."""
         X_arr = np.asarray(X, dtype=float)
         X_centered = X_arr - self.mean
-        X_proj = X_centered @ self.components.T
+        X_proj = X_centered @ self.components.T # type: ignore
         
         if isinstance(X, pd.DataFrame):
             return pd.DataFrame(X_proj, index=X.index, columns=[f"PC{i+1}" for i in range(self.n_components)])

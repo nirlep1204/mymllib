@@ -42,7 +42,7 @@ class ICA:
         
         D = np.diag(1.0 / np.sqrt(np.maximum(vals, 1e-10)))
         self.whitening = D @ vecs.T
-        X_white = X_centered @ self.whitening.T
+        X_white = X_centered @ self.whitening.T # type: ignore
         
         # FastICA with deflation
         W = np.zeros((self.n_components, self.n_components))
@@ -73,15 +73,15 @@ class ICA:
                 
             W[p] = w
             
-        self.unmixing = W
+        self.unmixing = W # type: ignore
         return self
 
     def transform(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Recover independent components from X."""
         X_arr = np.asarray(X, dtype=float)
         X_centered = X_arr - self.mean
-        X_white = X_centered @ self.whitening.T
-        components = X_white @ self.unmixing.T
+        X_white = X_centered @ self.whitening.T # type: ignore
+        components = X_white @ self.unmixing.T # type: ignore
         
         if isinstance(X, pd.DataFrame):
             return pd.DataFrame(components, index=X.index, columns=[f"IC{i+1}" for i in range(self.n_components)])

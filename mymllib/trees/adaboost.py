@@ -18,7 +18,7 @@ class AdaBoost:
         y_arr = y.values if isinstance(y, (pd.Series, pd.DataFrame)) else y
         y_arr = y_arr.ravel()
         
-        self.classes = np.unique(y_arr)
+        self.classes = np.unique(y_arr) # type: ignore
         K = len(self.classes)
         m = len(X_arr)
         w = np.ones(m) / m
@@ -33,7 +33,7 @@ class AdaBoost:
             if isinstance(X, pd.DataFrame):
                 stump.fit(X.iloc[indices], pd.Series(y_sample))
             else:
-                stump.fit(X_sample, y_sample)
+                stump.fit(X_sample, y_sample) # type: ignore
                 
             pred = stump.predict(X_arr)
             if isinstance(pred, pd.Series):
@@ -63,7 +63,7 @@ class AdaBoost:
     def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> Union[pd.Series, np.ndarray]:
         X_arr = X.values if isinstance(X, pd.DataFrame) else X
         n = len(X_arr)
-        class_scores = {c: np.zeros(n) for c in self.classes}
+        class_scores = {c: np.zeros(n) for c in self.classes} # type: ignore
         
         for stump, alpha in zip(self.estimators, self.estimator_weights):
             pred = stump.predict(X)
@@ -72,12 +72,12 @@ class AdaBoost:
             for i in range(n):
                 class_scores[pred[i]][i] += alpha
                 
-        scores = np.zeros((n, len(self.classes)))
-        for i, c in enumerate(self.classes):
+        scores = np.zeros((n, len(self.classes))) # type: ignore
+        for i, c in enumerate(self.classes): # type: ignore
             scores[:, i] = class_scores[c]
             
         pred_indices = np.argmax(scores, axis=1)
-        preds = self.classes[pred_indices]
+        preds = self.classes[pred_indices] # type: ignore
         
         if isinstance(X, pd.DataFrame):
             return pd.Series(preds, index=X.index)

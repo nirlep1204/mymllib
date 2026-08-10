@@ -9,7 +9,7 @@ class Bag:
         self.base_model = base_model
         self.n_models = n_models
         self.seed = seed
-        self.models = []
+        self.models = [] # type: ignore
         
     def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray], y: Union[pd.DataFrame, pd.Series, np.ndarray]) -> "Bag":
         """Fit bagging ensemble."""
@@ -25,7 +25,7 @@ class Bag:
 
         if self.base_model is None:
             # infer task: if continuous float or many unique, regress
-            if np.issubdtype(y_arr.dtype, np.floating) or (np.issubdtype(y_arr.dtype, np.number) and len(np.unique(y_arr)) > 20):
+            if np.issubdtype(y_arr.dtype, np.floating) or (np.issubdtype(y_arr.dtype, np.number) and len(np.unique(y_arr)) > 20): # type: ignore
                 self.base_model = Tree(task='regress')
             else:
                 self.base_model = Tree(task='classify')
@@ -49,7 +49,7 @@ class Bag:
             X_boot = X_arr[idxs]
             y_boot = y_arr[idxs]
             
-            model.fit(X_boot, y_boot)
+            model.fit(X_boot, y_boot) # type: ignore
             self.models.append(model)
             
         return self

@@ -25,17 +25,17 @@ class Factor:
         vals, vecs = np.linalg.eigh(S)
         idx = np.argsort(vals)[::-1][:self.n_factors]
         self._loadings = vecs[:, idx] * np.sqrt(np.maximum(vals[idx], 0))
-        self.noise = np.diag(S).copy()
+        self.noise = np.diag(S).copy() # type: ignore
         
         for _ in range(self.max_iter):
             L = self._loadings
-            Psi_inv = np.diag(1.0 / (self.noise + 1e-10))
+            Psi_inv = np.diag(1.0 / (self.noise + 1e-10)) # type: ignore
             
             # E-step
-            M = L.T @ Psi_inv @ L + np.eye(self.n_factors)
+            M = L.T @ Psi_inv @ L + np.eye(self.n_factors) # type: ignore
             M_inv = np.linalg.inv(M)
             
-            beta = M_inv @ L.T @ Psi_inv
+            beta = M_inv @ L.T @ Psi_inv # type: ignore
             E_z = X_c @ beta.T
             
             E_zz = m * M_inv + E_z.T @ E_z
@@ -60,8 +60,8 @@ class Factor:
         X_arr = np.asarray(X, dtype=float)
         X_c = X_arr - self.mean
         
-        Psi_inv = np.diag(1.0 / (self.noise + 1e-10))
-        M = self._loadings.T @ Psi_inv @ self._loadings + np.eye(self.n_factors)
+        Psi_inv = np.diag(1.0 / (self.noise + 1e-10)) # type: ignore
+        M = self._loadings.T @ Psi_inv @ self._loadings + np.eye(self.n_factors) # type: ignore
         M_inv = np.linalg.inv(M)
         
         z = X_c @ Psi_inv @ self._loadings @ M_inv
@@ -77,4 +77,4 @@ class Factor:
     @property
     def loadings(self) -> np.ndarray:
         """Factor loadings matrix."""
-        return self._loadings
+        return self._loadings # type: ignore

@@ -100,7 +100,7 @@ class XGBoost:
         y_arr = y_arr.ravel()
         
         if self.task == 'classify':
-            self.classes = np.unique(y_arr)
+            self.classes = np.unique(y_arr) # type: ignore
             y_bin = np.where(y_arr == self.classes[1], 1, 0)
             
             p = np.mean(y_bin)
@@ -121,7 +121,7 @@ class XGBoost:
                 F += self.lr * tree.predict(X_arr)
                 
         else:
-            self.initial_pred = np.mean(y_arr)
+            self.initial_pred = np.mean(y_arr) # type: ignore
             F = np.full(len(y_arr), self.initial_pred)
             
             for _ in range(self.n_rounds):
@@ -152,10 +152,10 @@ class XGBoost:
         X_arr = X.values if isinstance(X, pd.DataFrame) else X
         if self.task == 'classify':
             p = self.predict_proba(X)
-            preds = np.where(p >= 0.5, self.classes[1], self.classes[0])
+            preds = np.where(p >= 0.5, self.classes[1], self.classes[0]) # type: ignore
             if isinstance(X, pd.DataFrame):
                 return pd.Series(preds, index=X.index)
-            return preds
+            return preds # type: ignore
         else:
             F = np.full(len(X_arr), self.initial_pred)
             for tree in self.trees:

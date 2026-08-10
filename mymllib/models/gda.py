@@ -75,7 +75,7 @@ class GDA:
             log_posteriors.append(log_lik + log_prior)
             
         # Log-sum-exp trick for numerical stability
-        log_posteriors = np.column_stack(log_posteriors)
+        log_posteriors = np.column_stack(log_posteriors) # type: ignore
         max_log = np.max(log_posteriors, axis=1, keepdims=True)
         exp_vals = np.exp(log_posteriors - max_log)
         probs = exp_vals / np.sum(exp_vals, axis=1, keepdims=True)

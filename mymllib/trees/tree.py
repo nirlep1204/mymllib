@@ -31,9 +31,9 @@ class Tree:
     def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray], y: Union[pd.DataFrame, pd.Series, np.ndarray], classes: Optional[np.ndarray] = None) -> "Tree":
         """Build decision tree recursively."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
-            X = X.values
+            X = X.values # type: ignore
         if isinstance(y, (pd.DataFrame, pd.Series)):
-            y = y.values
+            y = y.values # type: ignore
 
         X = np.asarray(X)
         y = np.asarray(y)
@@ -159,7 +159,7 @@ class Tree:
     def predict(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> np.ndarray:
         """Predict labels/values for samples."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
-            X = X.values
+            X = X.values # type: ignore
         X = np.asarray(X)
 
         preds_list = [self._traverse_tree(x, self.root) for x in X]
@@ -176,13 +176,13 @@ class Tree:
             raise ValueError("predict_proba is only available for classification.")
 
         if isinstance(X, (pd.DataFrame, pd.Series)):
-            X = X.values
+            X = X.values # type: ignore
         X = np.asarray(X)
 
         leaf_vals = [self._traverse_tree(x, self.root) for x in X]
         probs = []
         for val in leaf_vals:
-            probs.append([val["probs"][c] for c in self.classes])
+            probs.append([val["probs"][c] for c in self.classes]) # type: ignore
 
         return np.array(probs)
 

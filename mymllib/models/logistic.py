@@ -20,7 +20,7 @@ class Logistic:
         self.alpha = float(alpha)
         self.seed = int(seed) if seed is not None else None
         self.weights = None
-        self.losses = []
+        self.losses = [] # type: ignore
 
     @property
     def w(self) -> Optional[np.ndarray]:
@@ -49,7 +49,7 @@ class Logistic:
 
         m, n = X.shape
         X_b = np.c_[np.ones((m, 1)), X]
-        self.weights = np.zeros(n + 1)
+        self.weights = np.zeros(n + 1) # type: ignore
         
         # Initial baseline loss
         full_z = np.clip(X_b @ self.weights, -500, 500)
@@ -88,7 +88,7 @@ class Logistic:
                     reg_grad[0] = 0
                     grad += reg_grad
                 elif self.reg == "l1":
-                    reg_grad = (self.alpha / k) * np.sign(self.weights)
+                    reg_grad = (self.alpha / k) * np.sign(self.weights) # type: ignore
                     reg_grad[0] = 0
                     grad += reg_grad
                     

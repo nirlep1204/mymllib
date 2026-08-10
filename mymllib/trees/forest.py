@@ -73,7 +73,7 @@ class Forest:
         """Predict labels/values using the ensemble."""
         if self.task == "classify":
             probas = self.predict_proba(X)
-            return self.classes[np.argmax(probas, axis=1)]
+            return self.classes[np.argmax(probas, axis=1)] # type: ignore
         else:
             preds = np.array([tree.predict(X) for tree in self.trees])
             return np.mean(preds, axis=0)

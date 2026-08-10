@@ -23,7 +23,7 @@ class GMM:
         else:
             X_arr = np.array(X)
             
-        n_samples, n_features = X_arr.shape
+        n_samples, n_features = X_arr.shape # type: ignore
         
         if self.seed is not None:
             np.random.seed(self.seed)
