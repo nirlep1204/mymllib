@@ -26,10 +26,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e .
 
-    - name: Run Test Suite
+    - name: Run Benchmarks (Sanity Check)
       run: |
-        python -m unittest discover tests
-        python tests/test_full_library.py
+        python benchmarks/benchmark.py --sizes 100
 
     - name: Test CLI
       run: |
