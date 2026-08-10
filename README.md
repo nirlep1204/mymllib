@@ -101,6 +101,8 @@ So I wrote a small benchmarking script (`benchmarks/benchmark.py`) that times ea
 
 The full plot is saved in `benchmarks/complexity_plot.png`.
 
+> **Note on overlapping algorithms:** If you look at the plot, you'll notice a thick line at the very bottom (near ~0.0 seconds). This is because algorithms like **PCA, Naive Bayes, KNN, Linear Regression, and KMeans** are heavily optimized via NumPy vectorization. They execute so quickly at $N \le 500$ that they hit the resolution limit of Python's `time.time()` function, causing their plotted lines to perfectly overlap!
+
 ---
 
 ## Project Structure
