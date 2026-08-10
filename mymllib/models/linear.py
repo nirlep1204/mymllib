@@ -1,8 +1,8 @@
 import numpy as np
-
+from typing import Union, Optional, Any
 
 class Linear:
-    def __init__(self, method="gd", lr=0.01, max_iter=1000, batch_size=None, reg=None, alpha=0.0, seed=None):
+    def __init__(self, method: str = "gd", lr: float = 0.01, max_iter: int = 1000, batch_size: Optional[int] = None, reg: Optional[str] = None, alpha: float = 0.0, seed: Optional[int] = None) -> None:
         """Initialize Linear Regression.
         
         Parameters:
@@ -25,20 +25,20 @@ class Linear:
         self.losses = []
 
     @property
-    def w(self):
+    def w(self) -> Optional[np.ndarray]:
         """Feature weights / coefficients (excluding intercept)."""
         if self.weights is None:
             return None
         return self.weights[1:]
 
     @property
-    def b(self):
+    def b(self) -> Optional[float]:
         """Bias / intercept term."""
         if self.weights is None:
             return None
         return float(self.weights[0])
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "Linear":
         """Fit the model to the data."""
         X = np.asarray(X)
         y = np.asarray(y)
@@ -115,7 +115,7 @@ class Linear:
 
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict target values."""
         if self.weights is None:
             raise ValueError("Model has not been fitted yet. Call .fit() first.")
@@ -125,7 +125,7 @@ class Linear:
         X_b = np.c_[np.ones((X.shape[0], 1)), X]
         return X_b @ self.weights
 
-    def cost(self, X, y):
+    def cost(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> float:
         """Calculate MSE cost."""
         X = np.asarray(X)
         y = np.asarray(y)

@@ -1,15 +1,16 @@
 import numpy as np
 import pandas as pd
+from typing import Any, Tuple, Optional, Union
 
 
 class Scaler:
     """Standardization (zero mean, unit variance): (x - mean) / std."""
 
-    def __init__(self):
-        self.mean = None
-        self.std = None
+    def __init__(self) -> None:
+        self.mean: Optional[np.ndarray] = None
+        self.std: Optional[np.ndarray] = None
 
-    def fit(self, X):
+    def fit(self, X: Any) -> 'Scaler':
         """Compute the mean and std to be used for later scaling."""
         is_df = isinstance(X, pd.DataFrame)
         is_series = isinstance(X, pd.Series)
@@ -19,11 +20,11 @@ class Scaler:
         self.std = np.std(vals, axis=0)
         return self
 
-    def fit_transform(self, X):
+    def fit_transform(self, X: Any) -> Any:
         """Fit to data, then transform it."""
         return self.fit(X).transform(X)
 
-    def transform(self, X):
+    def transform(self, X: Any) -> Any:
         """Perform standardization by centering and scaling."""
         if self.mean is None or self.std is None:
             raise ValueError("Call .fit() or .fit_transform() before calling .transform().")
@@ -42,7 +43,7 @@ class Scaler:
             return pd.Series(res, index=X.index, name=X.name)
         return res
 
-    def inverse_transform(self, X):
+    def inverse_transform(self, X: Any) -> Any:
         """Scale back the data to the original representation."""
         if self.mean is None or self.std is None:
             raise ValueError("Call .fit() or .fit_transform() first.")
@@ -62,11 +63,11 @@ class Scaler:
 class Normalizer:
     """Min-max scaling to range [0, 1]: (x - min) / (max - min)."""
 
-    def __init__(self):
-        self.min = None
-        self.max = None
+    def __init__(self) -> None:
+        self.min: Optional[np.ndarray] = None
+        self.max: Optional[np.ndarray] = None
 
-    def fit(self, X):
+    def fit(self, X: Any) -> 'Normalizer':
         """Compute the minimum and maximum to be used for later scaling."""
         is_df = isinstance(X, pd.DataFrame)
         is_series = isinstance(X, pd.Series)
@@ -76,11 +77,11 @@ class Normalizer:
         self.max = np.max(vals, axis=0)
         return self
 
-    def fit_transform(self, X):
+    def fit_transform(self, X: Any) -> Any:
         """Fit to data, then transform it."""
         return self.fit(X).transform(X)
 
-    def transform(self, X):
+    def transform(self, X: Any) -> Any:
         """Scale features of X to range [0, 1]."""
         if self.min is None or self.max is None:
             raise ValueError("Call .fit() or .fit_transform() before calling .transform().")
@@ -100,7 +101,7 @@ class Normalizer:
             return pd.Series(res, index=X.index, name=X.name)
         return res
 
-    def inverse_transform(self, X):
+    def inverse_transform(self, X: Any) -> Any:
         """Scale back the data to the original representation."""
         if self.min is None or self.max is None:
             raise ValueError("Call .fit() or .fit_transform() first.")
@@ -120,21 +121,21 @@ class Normalizer:
 class Encoder:
     """One-hot encoding for categorical columns."""
 
-    def __init__(self):
-        self.categories = None
+    def __init__(self) -> None:
+        self.categories: Optional[list] = None
 
-    def fit(self, data, col):
+    def fit(self, data: pd.DataFrame, col: str) -> 'Encoder':
         """Discover unique categories in specified column."""
         if not isinstance(data, pd.DataFrame):
             raise ValueError("data must be a pandas DataFrame.")
         self.categories = list(pd.unique(data[col]))
         return self
 
-    def fit_transform(self, data, col):
+    def fit_transform(self, data: pd.DataFrame, col: str) -> pd.DataFrame:
         """Fit to categorical column, then return one-hot encoded DataFrame."""
         return self.fit(data, col).transform(data, col)
 
-    def transform(self, data, col):
+    def transform(self, data: pd.DataFrame, col: str) -> pd.DataFrame:
         """Transform categorical column into one-hot binary columns."""
         if self.categories is None:
             raise ValueError("Call .fit() or .fit_transform() before calling .transform().")
@@ -142,7 +143,7 @@ class Encoder:
             raise ValueError("data must be a pandas DataFrame.")
 
         df = data.copy()
-        col_idx = df.columns.get_loc(col)
+        col_idx = int(df.columns.get_loc(col)) # type: ignore
 
         encoded_cols = {}
         for cat in self.categories:
@@ -159,29 +160,29 @@ class Encoder:
 class LabelEncoder:
     """Convert labels to integers [0, 1, ..., K-1]."""
 
-    def __init__(self):
-        self.classes = None
-        self.mapping = None
+    def __init__(self) -> None:
+        self.classes: Optional[np.ndarray] = None
+        self.mapping: Optional[dict] = None
 
-    def fit(self, y):
+    def fit(self, y: Any) -> 'LabelEncoder':
         """Fit label encoder to classes."""
         y_arr = np.asarray(y)
         self.classes = np.unique(y_arr)
         self.mapping = {label: i for i, label in enumerate(self.classes)}
         return self
 
-    def fit_transform(self, y):
+    def fit_transform(self, y: Any) -> np.ndarray:
         """Fit label encoder and return integer encoded array."""
         return self.fit(y).transform(y)
 
-    def transform(self, y):
+    def transform(self, y: Any) -> np.ndarray:
         """Transform labels to normalized integer encoding."""
         if self.mapping is None:
             raise ValueError("Call .fit() or .fit_transform() before calling .transform().")
         y_arr = np.asarray(y)
         return np.array([self.mapping[val] for val in y_arr])
 
-    def inverse(self, y_encoded):
+    def inverse(self, y_encoded: Any) -> np.ndarray:
         """Transform integer labels back to original class names."""
         if self.classes is None:
             raise ValueError("Call .fit() or .fit_transform() first.")
@@ -189,7 +190,7 @@ class LabelEncoder:
         return self.classes[y_arr]
 
 
-def split(X, y, test=0.2, seed=None):
+def split(X: Any, y: Any, test: float = 0.2, seed: Optional[int] = None) -> Tuple[Any, Any, Any, Any]:
     """Train/test split."""
     if len(X) != len(y):
         raise ValueError("X and y must have the same number of rows.")
@@ -213,7 +214,7 @@ def split(X, y, test=0.2, seed=None):
     return slice_data(X, train_idx), slice_data(X, test_idx), slice_data(y, train_idx), slice_data(y, test_idx)
 
 
-def xy(data, target):
+def xy(data: pd.DataFrame, target: str) -> Tuple[pd.DataFrame, pd.Series]:
     """Split DataFrame into features X and target y."""
     if not isinstance(data, pd.DataFrame):
         raise ValueError("data must be a pandas DataFrame.")

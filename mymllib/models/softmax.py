@@ -1,12 +1,12 @@
 import numpy as np
-
+from typing import Union, Optional, Any
 def _softmax(z):
     """Compute softmax values for each sets of scores in z."""
     exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
     return exp_z / np.sum(exp_z, axis=1, keepdims=True)
 
 class Softmax:
-    def __init__(self, lr=0.01, max_iter=1000, batch_size=None, seed=None):
+    def __init__(self, lr: float = 0.01, max_iter: int = 1000, batch_size: Optional[int] = None, seed: Optional[int] = None) -> None:
         """Initialize the Softmax model.
         
         Parameters:
@@ -23,7 +23,7 @@ class Softmax:
         self.classes = None
         self.losses = []
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "Softmax":
         """Fit the model to the training data."""
         if hasattr(X, 'values'):
             X = X.values
@@ -83,7 +83,7 @@ class Softmax:
             
         return self
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Return probability estimates for each class."""
         if hasattr(X, 'values'):
             X = X.values
@@ -95,7 +95,7 @@ class Softmax:
         logits = X_b @ self.weights
         return _softmax(logits)
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class labels for samples in X."""
         probs = self.predict_proba(X)
         class_indices = np.argmax(probs, axis=1)

@@ -1,33 +1,34 @@
+from typing import Any, Tuple, Optional
 import numpy as np
 import pandas as pd
 
 
-def _to_numpy(a):
+def _to_numpy(a: Any) -> np.ndarray:
     if isinstance(a, (pd.DataFrame, pd.Series)):
         return a.to_numpy()
     return np.asarray(a)
 
 
-def mse(y, pred):
+def mse(y: Any, pred: Any) -> float:
     """Mean Squared Error."""
     y = _to_numpy(y).ravel()
     pred = _to_numpy(pred).ravel()
     return float(np.mean((y - pred) ** 2))
 
 
-def rmse(y, pred):
+def rmse(y: Any, pred: Any) -> float:
     """Root Mean Squared Error."""
     return float(np.sqrt(mse(y, pred)))
 
 
-def mae(y, pred):
+def mae(y: Any, pred: Any) -> float:
     """Mean Absolute Error."""
     y = _to_numpy(y).ravel()
     pred = _to_numpy(pred).ravel()
     return float(np.mean(np.abs(y - pred)))
 
 
-def r2(y, pred):
+def r2(y: Any, pred: Any) -> float:
     """R-squared (coefficient of determination)."""
     y = _to_numpy(y).ravel()
     pred = _to_numpy(pred).ravel()
@@ -38,14 +39,14 @@ def r2(y, pred):
     return float(1.0 - (ss_res / ss_tot))
 
 
-def accuracy(y, pred):
+def accuracy(y: Any, pred: Any) -> float:
     """Classification accuracy."""
     y = _to_numpy(y).ravel()
     pred = _to_numpy(pred).ravel()
     return float(np.mean(y == pred))
 
 
-def precision(y, pred, average="macro", pos_label=1):
+def precision(y: Any, pred: Any, average: str = "macro", pos_label: int = 1) -> float:
     """Precision score (binary or macro)."""
     y = _to_numpy(y).ravel()
     pred = _to_numpy(pred).ravel()
@@ -64,7 +65,7 @@ def precision(y, pred, average="macro", pos_label=1):
     return float(np.mean(precisions))
 
 
-def recall(y, pred, average="macro", pos_label=1):
+def recall(y: Any, pred: Any, average: str = "macro", pos_label: int = 1) -> float:
     """Recall score (binary or macro)."""
     y = _to_numpy(y).ravel()
     pred = _to_numpy(pred).ravel()
@@ -83,7 +84,7 @@ def recall(y, pred, average="macro", pos_label=1):
     return float(np.mean(recalls))
 
 
-def f1(y, pred, average="macro", pos_label=1):
+def f1(y: Any, pred: Any, average: str = "macro", pos_label: int = 1) -> float:
     """F1 score."""
     p = precision(y, pred, average=average, pos_label=pos_label)
     r = recall(y, pred, average=average, pos_label=pos_label)
@@ -92,7 +93,7 @@ def f1(y, pred, average="macro", pos_label=1):
     return float(2.0 * (p * r) / (p + r))
 
 
-def confusion(y, pred):
+def confusion(y: Any, pred: Any) -> np.ndarray:
     """Confusion matrix where rows are true labels and columns are predicted labels."""
     y = _to_numpy(y).ravel()
     pred = _to_numpy(pred).ravel()
@@ -106,7 +107,7 @@ def confusion(y, pred):
     return matrix
 
 
-def roc_curve(y_true, y_score, pos_label=1):
+def roc_curve(y_true: Any, y_score: Any, pos_label: int = 1) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute Receiver Operating Characteristic (ROC) curve.
 
     Parameters:
@@ -155,7 +156,7 @@ def roc_curve(y_true, y_score, pos_label=1):
     return fpr, tpr, thresholds
 
 
-def auc(x, y):
+def auc(x: Any, y: Any) -> float:
     """Compute Area Under the Curve using trapezoidal rule."""
     x_arr = _to_numpy(x).ravel()
     y_arr = _to_numpy(y).ravel()
@@ -165,13 +166,13 @@ def auc(x, y):
     return float(np.sum(dx * (y_arr[:-1] + y_arr[1:]) / 2.0))
 
 
-def roc_auc_score(y_true, y_score, pos_label=1):
+def roc_auc_score(y_true: Any, y_score: Any, pos_label: int = 1) -> float:
     """Compute Area Under the Receiver Operating Characteristic (ROC AUC) Score."""
     fpr, tpr, _ = roc_curve(y_true, y_score, pos_label=pos_label)
     return auc(fpr, tpr)
 
 
-def wcss(X, labels, centers=None):
+def wcss(X: Any, labels: Any, centers: Optional[Any] = None) -> float:
     """Within-cluster sum of squares."""
     X = _to_numpy(X)
     labels = _to_numpy(labels).ravel()
@@ -190,7 +191,7 @@ def wcss(X, labels, centers=None):
     return float(total_wcss)
 
 
-def silhouette(X, labels):
+def silhouette(X: Any, labels: Any) -> float:
     """Silhouette score for clustering quality."""
     X = _to_numpy(X)
     labels = _to_numpy(labels).ravel()

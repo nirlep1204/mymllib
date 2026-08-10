@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Union, List, Any, Tuple
 
 class Hierarchical:
     """Agglomerative hierarchical clustering."""
     
-    def __init__(self, k=3, linkage='single'):
+    def __init__(self, k: int = 3, linkage: str = 'single') -> None:
         self.k = k
         self.linkage = linkage
-        self.labels = None
-        self.merge_history = []
+        self.labels: Any = None
+        self.merge_history: List[Any] = []
 
-    def fit(self, X):
+    def fit(self, X: Union[np.ndarray, pd.DataFrame]) -> "Hierarchical":
         """Fit hierarchical clustering to data."""
         if isinstance(X, pd.DataFrame):
             X_arr = X.to_numpy()
@@ -96,6 +97,6 @@ class Hierarchical:
             
         return self
 
-    def dendrogram_data(self):
+    def dendrogram_data(self) -> List[Tuple[int, int, float, int]]:
         """Return merge history for dendrogram plotting."""
         return self.merge_history

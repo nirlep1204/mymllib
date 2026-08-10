@@ -4,7 +4,9 @@ import pandas as pd
 from ..metrics.scores import accuracy, r2
 
 
-def _to_numpy(a):
+from typing import Any, Iterator, Tuple, Optional, Callable, Union
+
+def _to_numpy(a: Any) -> np.ndarray:
     if isinstance(a, (pd.DataFrame, pd.Series)):
         return a.to_numpy()
     return np.asarray(a)
@@ -13,12 +15,12 @@ def _to_numpy(a):
 class KFold:
     """K-Fold cross-validator."""
 
-    def __init__(self, n_splits=5, shuffle=True, seed=None):
+    def __init__(self, n_splits: int = 5, shuffle: bool = True, seed: Optional[int] = None) -> None:
         self.n_splits = int(n_splits)
         self.shuffle = bool(shuffle)
         self.seed = seed
 
-    def split(self, X, y=None):
+    def split(self, X: Any, y: Optional[Any] = None) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         X_arr = _to_numpy(X)
         n_samples = len(X_arr)
         if self.n_splits <= 1 or self.n_splits > n_samples:
@@ -44,12 +46,12 @@ class KFold:
 class StratifiedKFold:
     """Stratified K-Fold cross-validator preserving class percentage per fold."""
 
-    def __init__(self, n_splits=5, shuffle=True, seed=None):
+    def __init__(self, n_splits: int = 5, shuffle: bool = True, seed: Optional[int] = None) -> None:
         self.n_splits = int(n_splits)
         self.shuffle = bool(shuffle)
         self.seed = seed
 
-    def split(self, X, y):
+    def split(self, X: Any, y: Any) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         if y is None:
             raise ValueError("StratifiedKFold requires target labels y.")
         y_arr = _to_numpy(y).ravel()
@@ -66,7 +68,8 @@ class StratifiedKFold:
             cls_indices = [rng.permutation(idx) for idx in cls_indices]
 
         # Distribute each class samples across folds
-        test_folds = [[] for _ in range(self.n_splits)]
+        from typing import List
+        test_folds: List[List[int]] = [[] for _ in range(self.n_splits)]
         for idxs in cls_indices:
             splits = np.array_split(idxs, self.n_splits)
             for fold_i, split_idxs in enumerate(splits):
@@ -82,10 +85,10 @@ class StratifiedKFold:
 class LeaveOneOut:
     """Leave-One-Out (LOOCV) cross-validator where test set is 1 sample per fold."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def split(self, X, y=None):
+    def split(self, X: Any, y: Optional[Any] = None) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         X_arr = _to_numpy(X)
         n_samples = len(X_arr)
         indices = np.arange(n_samples)
@@ -102,12 +105,12 @@ LOOCV = LeaveOneOut
 class ShuffleSplit:
     """Random permutation train/test cross-validator."""
 
-    def __init__(self, n_splits=5, test_size=0.2, seed=None):
+    def __init__(self, n_splits: int = 5, test_size: float = 0.2, seed: Optional[int] = None) -> None:
         self.n_splits = int(n_splits)
         self.test_size = float(test_size)
         self.seed = seed
 
-    def split(self, X, y=None):
+    def split(self, X: Any, y: Optional[Any] = None) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         X_arr = _to_numpy(X)
         n_samples = len(X_arr)
         n_test = max(1, int(n_samples * self.test_size))
@@ -125,10 +128,10 @@ class ShuffleSplit:
 class TimeSeriesSplit:
     """Time-series forward chaining cross-validator without data leakage."""
 
-    def __init__(self, n_splits=5):
+    def __init__(self, n_splits: int = 5) -> None:
         self.n_splits = int(n_splits)
 
-    def split(self, X, y=None):
+    def split(self, X: Any, y: Optional[Any] = None) -> Iterator[Tuple[np.ndarray, np.ndarray]]:
         X_arr = _to_numpy(X)
         n_samples = len(X_arr)
         if self.n_splits + 1 > n_samples:
@@ -146,7 +149,7 @@ class TimeSeriesSplit:
             yield indices[:train_end], indices[train_end:test_end]
 
 
-def cross_validate(model, X, y, cv=5, folds=None, metric=None, seed=None):
+def cross_validate(model: Any, X: Any, y: Any, cv: Any = 5, folds: Optional[int] = None, metric: Optional[Callable] = None, seed: Optional[int] = None) -> np.ndarray:
     """Perform cross-validation on a model using KFold, StratifiedKFold, or any splitter.
 
     Parameters:
@@ -176,6 +179,7 @@ def cross_validate(model, X, y, cv=5, folds=None, metric=None, seed=None):
         metric = accuracy if is_classification else r2
 
     # Determine CV splitter
+    splitter: Any
     if isinstance(cv, int):
         if is_classification:
             splitter = StratifiedKFold(n_splits=cv, shuffle=True, seed=seed)

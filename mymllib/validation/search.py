@@ -1,13 +1,14 @@
 import copy
 import itertools
 import numpy as np
+from typing import Any, Dict, List, Optional, Iterator, Callable
 from .cv import cross_validate
 
 
 class GridSearchCV:
     """Exhaustive hyperparameter grid search using cross-validation."""
 
-    def __init__(self, model, param_grid, cv=5, metric=None, seed=None):
+    def __init__(self, model: Any, param_grid: Dict[str, List[Any]], cv: Any = 5, metric: Optional[Callable] = None, seed: Optional[int] = None) -> None:
         """Initialize Grid Search.
 
         Parameters:
@@ -23,18 +24,18 @@ class GridSearchCV:
         self.metric = metric
         self.seed = seed
 
-        self.best_params_ = None
+        self.best_params_: Optional[Dict[str, Any]] = None
         self.best_score_ = -np.inf
-        self.best_model_ = None
-        self.cv_results_ = []
+        self.best_model_: Optional[Any] = None
+        self.cv_results_: List[Dict[str, Any]] = []
 
-    def _generate_candidates(self):
+    def _generate_candidates(self) -> Iterator[Dict[str, Any]]:
         keys = list(self.param_grid.keys())
         values = list(self.param_grid.values())
         for combination in itertools.product(*values):
             yield dict(zip(keys, combination))
 
-    def fit(self, X, y):
+    def fit(self, X: Any, y: Any) -> 'GridSearchCV':
         """Fit all parameter combinations and find the best model."""
         candidates = list(self._generate_candidates())
         self.cv_results_ = []
@@ -67,19 +68,21 @@ class GridSearchCV:
 
         # Refit best model on full dataset
         self.best_model_ = copy.deepcopy(self.model)
-        for k, v in self.best_params_.items():
-            setattr(self.best_model_, k, v)
-        self.best_model_.fit(X, y)
+        if self.best_params_ is not None:
+            for k, v in self.best_params_.items():
+                setattr(self.best_model_, k, v)
+        if hasattr(self.best_model_, "fit"):
+            self.best_model_.fit(X, y)
 
         return self
 
-    def predict(self, X):
+    def predict(self, X: Any) -> Any:
         """Predict using the best fitted model."""
         if self.best_model_ is None:
             raise ValueError("This GridSearchCV instance is not fitted yet. Call .fit() first.")
         return self.best_model_.predict(X)
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Any) -> Any:
         """Predict probabilities using the best fitted model."""
         if self.best_model_ is None:
             raise ValueError("This GridSearchCV instance is not fitted yet. Call .fit() first.")
@@ -87,7 +90,7 @@ class GridSearchCV:
             return self.best_model_.predict_proba(X)
         raise AttributeError(f"{type(self.best_model_).__name__} does not support predict_proba.")
 
-    def summary(self):
+    def summary(self) -> None:
         """Print a summary table of hyperparameter search results."""
         sorted_results = sorted(self.cv_results_, key=lambda r: r["mean_score"], reverse=True)
         print("=" * 65)
@@ -107,7 +110,7 @@ class GridSearchCV:
 class RandomSearchCV:
     """Randomized hyperparameter search using cross-validation."""
 
-    def __init__(self, model, param_distributions, n_iter=10, cv=5, metric=None, seed=None):
+    def __init__(self, model: Any, param_distributions: Dict[str, List[Any]], n_iter: int = 10, cv: Any = 5, metric: Optional[Callable] = None, seed: Optional[int] = None) -> None:
         """Initialize Randomized Search.
 
         Parameters:
@@ -125,15 +128,15 @@ class RandomSearchCV:
         self.metric = metric
         self.seed = seed
 
-        self.best_params_ = None
+        self.best_params_: Optional[Dict[str, Any]] = None
         self.best_score_ = -np.inf
-        self.best_model_ = None
-        self.cv_results_ = []
+        self.best_model_: Optional[Any] = None
+        self.cv_results_: List[Dict[str, Any]] = []
 
-    def _sample_candidates(self):
+    def _sample_candidates(self) -> List[Dict[str, Any]]:
         rng = np.random.default_rng(self.seed)
         keys = list(self.param_distributions.keys())
-        sampled = []
+        sampled: List[Dict[str, Any]] = []
         seen = set()
 
         # Calculate max possible combinations
@@ -156,7 +159,7 @@ class RandomSearchCV:
 
         return sampled
 
-    def fit(self, X, y):
+    def fit(self, X: Any, y: Any) -> 'RandomSearchCV':
         """Fit sampled parameter combinations and find the best model."""
         candidates = self._sample_candidates()
         self.cv_results_ = []
@@ -188,19 +191,21 @@ class RandomSearchCV:
 
         # Refit best model on full dataset
         self.best_model_ = copy.deepcopy(self.model)
-        for k, v in self.best_params_.items():
-            setattr(self.best_model_, k, v)
-        self.best_model_.fit(X, y)
+        if self.best_params_ is not None:
+            for k, v in self.best_params_.items():
+                setattr(self.best_model_, k, v)
+        if hasattr(self.best_model_, "fit"):
+            self.best_model_.fit(X, y)
 
         return self
 
-    def predict(self, X):
+    def predict(self, X: Any) -> Any:
         """Predict using the best fitted model."""
         if self.best_model_ is None:
             raise ValueError("This RandomSearchCV instance is not fitted yet. Call .fit() first.")
         return self.best_model_.predict(X)
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Any) -> Any:
         """Predict probabilities using the best fitted model."""
         if self.best_model_ is None:
             raise ValueError("This RandomSearchCV instance is not fitted yet. Call .fit() first.")
@@ -208,7 +213,7 @@ class RandomSearchCV:
             return self.best_model_.predict_proba(X)
         raise AttributeError(f"{type(self.best_model_).__name__} does not support predict_proba.")
 
-    def summary(self):
+    def summary(self) -> None:
         """Print a summary table of hyperparameter search results."""
         sorted_results = sorted(self.cv_results_, key=lambda r: r["mean_score"], reverse=True)
         print("=" * 65)

@@ -1,20 +1,21 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union, List
 from .tree import Tree
 
 class GradientBoost:
     """Gradient Boosting for regression and binary classification."""
     
-    def __init__(self, n_rounds=100, lr=0.1, max_depth=3, task='regress'):
+    def __init__(self, n_rounds: int = 100, lr: float = 0.1, max_depth: int = 3, task: str = 'regress') -> None:
         self.n_rounds = n_rounds
         self.lr = lr
         self.max_depth = max_depth
         self.task = task
-        self.estimators = []
-        self.initial_pred = None
-        self.classes = None
+        self.estimators: List[Any] = []
+        self.initial_pred: Any = None
+        self.classes: Optional[np.ndarray] = None
 
-    def fit(self, X, y):
+    def fit(self, X: Union[pd.DataFrame, np.ndarray], y: Union[pd.Series, pd.DataFrame, np.ndarray]) -> "GradientBoost":
         X_arr = X.values if isinstance(X, pd.DataFrame) else X
         y_arr = y.values if isinstance(y, (pd.Series, pd.DataFrame)) else y
         y_arr = y_arr.ravel()
@@ -69,7 +70,7 @@ class GradientBoost:
                 
         return self
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         if self.task != 'classify':
             raise ValueError("predict_proba is only for classification")
             
@@ -83,7 +84,7 @@ class GradientBoost:
         p = 1 / (1 + np.exp(-F))
         return p
 
-    def predict(self, X):
+    def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> Union[pd.Series, np.ndarray]:
         if self.task == 'classify':
             p = self.predict_proba(X)
             preds = np.where(p >= 0.5, self.classes[1], self.classes[0])

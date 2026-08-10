@@ -1,22 +1,23 @@
 import numpy as np
 import pandas as pd
+from typing import List, Optional, Any, Union
 from .optimizers import Adam
 
 class Network:
     """Neural Network."""
     
-    def __init__(self, layers):
+    def __init__(self, layers: List[Any]) -> None:
         self.layers = layers
-        self.losses = []
-        self.classes = None
+        self.losses: List[float] = []
+        self.classes: Optional[np.ndarray] = None
         self.is_classifier = False
         
-    def fit(self, X, y, optimizer=None, loss='cross_entropy', epochs=100, batch_size=32):
+    def fit(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.DataFrame, pd.Series], optimizer: Optional[Any] = None, loss: str = 'cross_entropy', epochs: int = 100, batch_size: int = 32) -> 'Network':
         """Train the neural network."""
         if isinstance(X, pd.DataFrame):
             X = X.values
         if isinstance(y, (pd.DataFrame, pd.Series)):
-            y = y.values
+            y = y.values # type: ignore
             
         if optimizer is None:
             optimizer = Adam(lr=0.001)
@@ -35,7 +36,8 @@ class Network:
             y_train = y_encoded
         else:
             self.is_classifier = False
-            y_train = y.reshape(-1, 1) if y.ndim == 1 else y
+            y_arr = np.asarray(y)
+            y_train = y_arr.reshape(-1, 1) if y_arr.ndim == 1 else y_arr
             
         self.losses = []
         t = 0
@@ -45,7 +47,7 @@ class Network:
             X_shuffled = X[indices]
             y_shuffled = y_train[indices]
             
-            epoch_loss = 0
+            epoch_loss = 0.0
             n_batches = 0
             
             for i in range(0, n_samples, batch_size):
@@ -85,13 +87,13 @@ class Network:
                     if hasattr(optimizer, 'beta1'): # Adam uses t
                         optimizer.update(layer, t)
                     else:
-                        optimizer.update(layer)
+                        optimizer.update(layer) # type: ignore
                         
-            self.losses.append(epoch_loss / n_batches)
+            self.losses.append(float(epoch_loss / n_batches))
             
         return self
         
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """Predict probabilities for classification."""
         if isinstance(X, pd.DataFrame):
             X = X.values
@@ -101,16 +103,17 @@ class Network:
             A = layer.forward(A)
         return A
         
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """Predict classes or continuous values."""
         preds = self.predict_proba(X)
         
         if self.is_classifier:
             if preds.shape[1] == 1:
                 idx = (preds >= 0.5).astype(int).ravel()
-                return self.classes[idx]
+                return self.classes[idx] # type: ignore
             else:
                 idx = np.argmax(preds, axis=1)
-                return self.classes[idx]
+                return self.classes[idx] # type: ignore
         else:
             return preds.ravel() if preds.shape[1] == 1 else preds
+

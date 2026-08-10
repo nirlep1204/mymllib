@@ -1,7 +1,8 @@
 import numpy as np
+from typing import Union, Any
 
 class KNN:
-    def __init__(self, k=5, task='classify'):
+    def __init__(self, k: int = 5, task: str = 'classify') -> None:
         """K-Nearest Neighbors."""
         if k <= 0:
             raise ValueError("k must be greater than 0.")
@@ -11,7 +12,7 @@ class KNN:
         self.k = k
         self.task = task
         
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "KNN":
         """Store the training data."""
         self.X_train = np.asarray(X)
         self.y_train = np.asarray(y).ravel()
@@ -21,7 +22,7 @@ class KNN:
             
         return self
         
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict labels or values for X."""
         X = np.asarray(X)
         

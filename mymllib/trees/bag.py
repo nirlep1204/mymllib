@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
 import copy
+from typing import Optional, Any, Union, List
 from .tree import Tree
 
 class Bag:
-    def __init__(self, base_model=None, n_models=10, seed=None):
+    def __init__(self, base_model: Optional[Any] = None, n_models: int = 10, seed: Optional[int] = None) -> None:
         self.base_model = base_model
         self.n_models = n_models
         self.seed = seed
         self.models = []
         
-    def fit(self, X, y):
+    def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray], y: Union[pd.DataFrame, pd.Series, np.ndarray]) -> "Bag":
         """Fit bagging ensemble."""
         if isinstance(X, pd.DataFrame) or isinstance(X, pd.Series):
             X_arr = X.values
@@ -53,7 +54,7 @@ class Bag:
             
         return self
         
-    def predict(self, X):
+    def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         """Aggregate predictions from models."""
         preds = np.array([model.predict(X) for model in self.models])
         
@@ -72,7 +73,7 @@ class Bag:
                 
             return np.apply_along_axis(majority_vote, 0, preds)
             
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         """Average probabilities if supported."""
         if not hasattr(self.models[0], 'predict_proba'):
             raise ValueError("Base model does not support predict_proba.")

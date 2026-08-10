@@ -1,18 +1,19 @@
 import numpy as np
 import pandas as pd
+from typing import Union, Optional, Any
 
 class GLM:
     """Generalized Linear Model supporting Gaussian, Bernoulli, and Poisson families."""
-    def __init__(self, family='gaussian', lr=0.01, max_iter=1000):
+    def __init__(self, family: str = 'gaussian', lr: float = 0.01, max_iter: int = 1000) -> None:
         if family not in ['gaussian', 'bernoulli', 'poisson']:
             raise ValueError("Family must be 'gaussian', 'bernoulli', or 'poisson'.")
         self.family = family
         self.lr = lr
         self.max_iter = max_iter
-        self.w = None
-        self.losses = []
+        self.w: Any = None
+        self.losses: List[Any] = []
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.DataFrame, pd.Series]) -> "GLM":
         """Fit the model using gradient descent."""
         if isinstance(X, pd.DataFrame):
             X = X.to_numpy()
@@ -43,7 +44,7 @@ class GLM:
             
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """Predict target values or class labels."""
         if isinstance(X, pd.DataFrame):
             X = X.to_numpy()
@@ -56,7 +57,7 @@ class GLM:
             return (mu >= 0.5).astype(int)
         return mu
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """Predict probabilities (meaningful for Bernoulli)."""
         if isinstance(X, pd.DataFrame):
             X = X.to_numpy()

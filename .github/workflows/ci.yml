@@ -24,11 +24,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e .
+        pip install -e .[dev]
 
-    - name: Run Benchmarks (Sanity Check)
+    - name: Run Test Suite
       run: |
-        python benchmarks/benchmark.py --sizes 100
+        pytest tests/ -v
+        mypy mymllib/
 
     - name: Test CLI
       run: |

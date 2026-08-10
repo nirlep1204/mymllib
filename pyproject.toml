@@ -25,7 +25,19 @@ mymllib = "mymllib.__main__:main"
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
+    "mypy>=1.0",
 ]
 
 [tool.setuptools.packages.find]
 include = ["mymllib*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+[tool.mypy]
+ignore_missing_imports = true
+strict_optional = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_unused_ignores = true

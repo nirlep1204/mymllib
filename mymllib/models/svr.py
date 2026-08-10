@@ -1,9 +1,9 @@
 import numpy as np
-
+from typing import Union, Optional, Any
 class SVR:
     """Support Vector Regression."""
     
-    def __init__(self, C=1.0, epsilon=0.1, kernel='linear', gamma=None, degree=3, lr=0.001, max_iter=1000):
+    def __init__(self, C: float = 1.0, epsilon: float = 0.1, kernel: str = 'linear', gamma: Optional[float] = None, degree: int = 3, lr: float = 0.001, max_iter: int = 1000) -> None:
         self.C = C
         self.epsilon = epsilon
         self.kernel = kernel
@@ -32,7 +32,7 @@ class SVR:
         else:
             raise ValueError(f"Unknown kernel: {self.kernel}")
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "SVR":
         if hasattr(X, 'values'):
             X = X.values
         if hasattr(y, 'values'):
@@ -104,7 +104,7 @@ class SVR:
                 
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         if hasattr(X, 'values'):
             X = X.values
         X = np.asarray(X, dtype=float)
@@ -116,7 +116,7 @@ class SVR:
             K = self._kernel_matrix(X, self.X_train)
             return K @ self.alpha + self.b
 
-    def support_vectors(self):
+    def support_vectors(self) -> np.ndarray:
         """Return indices of support vectors."""
         if self.X_train is None:
             return np.array([])

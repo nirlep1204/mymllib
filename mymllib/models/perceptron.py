@@ -1,18 +1,19 @@
 import numpy as np
 import pandas as pd
+from typing import Union, Any
 
 class Perceptron:
     """Classical single-layer Rosenblatt Perceptron for binary classification."""
     
-    def __init__(self, lr=0.01, max_iter=1000):
+    def __init__(self, lr: float = 0.01, max_iter: int = 1000) -> None:
         self.lr = lr
         self.max_iter = max_iter
-        self.w = None
-        self.b = None
-        self.errors = []
-        self.classes = None
+        self.w: Any = None
+        self.b: Any = None
+        self.errors: List[Any] = []
+        self.classes: Any = None
         
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.DataFrame, pd.Series]) -> "Perceptron":
         """Fit the model to the training data."""
         if isinstance(X, pd.DataFrame):
             X = X.values
@@ -56,12 +57,12 @@ class Perceptron:
                 
         return self
         
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """Predict classes for samples in X."""
         if isinstance(X, pd.DataFrame):
             X = X.values
             
         z = np.dot(X, self.w) + self.b
-        y_pred = np.where(z >= 0.0, 1, -1)
+        y_pred = np.where(z > 0.0, 1, -1)
         
         return np.where(y_pred == 1, self.classes[1], self.classes[0])

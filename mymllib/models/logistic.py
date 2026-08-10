@@ -1,8 +1,8 @@
 import numpy as np
-
+from typing import Union, Optional, Any
 
 class Logistic:
-    def __init__(self, lr=0.01, max_iter=1000, batch_size=None, reg=None, alpha=0.0, seed=None):
+    def __init__(self, lr: float = 0.01, max_iter: int = 1000, batch_size: Optional[int] = None, reg: Optional[str] = None, alpha: float = 0.0, seed: Optional[int] = None) -> None:
         """Initialize Logistic Regression.
         
         Parameters:
@@ -23,18 +23,18 @@ class Logistic:
         self.losses = []
 
     @property
-    def w(self):
+    def w(self) -> Optional[np.ndarray]:
         if self.weights is None:
             return None
         return self.weights[1:]
 
     @property
-    def b(self):
+    def b(self) -> Optional[float]:
         if self.weights is None:
             return None
         return float(self.weights[0])
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "Logistic":
         """Fit the model to the data."""
         X = np.asarray(X)
         y = np.asarray(y)
@@ -103,7 +103,7 @@ class Logistic:
 
         return self
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict probability of class 1."""
         if self.weights is None:
             raise ValueError("Model has not been fitted yet. Call .fit() first.")
@@ -115,12 +115,12 @@ class Logistic:
         z = np.clip(z, -500, 500)
         return 1 / (1 + np.exp(-z))
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class labels."""
         probs = self.predict_proba(X)
         return (probs >= 0.5).astype(int)
 
-    def cost(self, X, y):
+    def cost(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> float:
         """Calculate cross-entropy cost."""
         X = np.asarray(X)
         y = np.asarray(y)

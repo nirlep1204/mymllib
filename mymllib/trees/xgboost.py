@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union, List
 
 class XGBoostNode:
     """Internal decision tree node for XGBoost."""
-    def __init__(self, is_leaf=False, value=None, split_col=None, split_val=None, left=None, right=None):
+    def __init__(self, is_leaf: bool = False, value: Optional[float] = None, split_col: Optional[int] = None, split_val: Optional[float] = None, left: Optional['XGBoostNode'] = None, right: Optional['XGBoostNode'] = None) -> None:
         self.is_leaf = is_leaf
         self.value = value
         self.split_col = split_col
@@ -14,7 +15,7 @@ class XGBoostNode:
 class XGBoostTree:
     """A single XGBoost regression tree built using exact greedy algorithm."""
     
-    def __init__(self, max_depth=3, reg_lambda=1.0, gamma=0.0):
+    def __init__(self, max_depth: int = 3, reg_lambda: float = 1.0, gamma: float = 0.0) -> None:
         self.max_depth = max_depth
         self.reg_lambda = reg_lambda
         self.gamma = gamma
@@ -65,7 +66,7 @@ class XGBoostTree:
             
         return XGBoostNode(is_leaf=True, value=self._calc_weight(g, h))
 
-    def fit(self, X, g, h):
+    def fit(self, X: np.ndarray, g: np.ndarray, h: np.ndarray) -> "XGBoostTree":
         self.root = self._build_tree(X, g, h, 0)
         return self
 
@@ -76,24 +77,24 @@ class XGBoostTree:
             return self._predict_row(x, node.left)
         return self._predict_row(x, node.right)
 
-    def predict(self, X):
+    def predict(self, X: np.ndarray) -> np.ndarray:
         return np.array([self._predict_row(x, self.root) for x in X])
 
 class XGBoost:
     """XGBoost algorithm for regression and binary classification."""
     
-    def __init__(self, n_rounds=100, lr=0.1, max_depth=3, reg_lambda=1.0, gamma=0.0, task='regress'):
+    def __init__(self, n_rounds: int = 100, lr: float = 0.1, max_depth: int = 3, reg_lambda: float = 1.0, gamma: float = 0.0, task: str = 'regress') -> None:
         self.n_rounds = n_rounds
         self.lr = lr
         self.max_depth = max_depth
         self.reg_lambda = reg_lambda
         self.gamma = gamma
         self.task = task
-        self.trees = []
-        self.initial_pred = 0.0
-        self.classes = None
+        self.trees: List[Any] = []
+        self.initial_pred: float = 0.0
+        self.classes: Optional[np.ndarray] = None
 
-    def fit(self, X, y):
+    def fit(self, X: Union[pd.DataFrame, np.ndarray], y: Union[pd.Series, pd.DataFrame, np.ndarray]) -> "XGBoost":
         X_arr = X.values if isinstance(X, pd.DataFrame) else X
         y_arr = y.values if isinstance(y, (pd.Series, pd.DataFrame)) else y
         y_arr = y_arr.ravel()
@@ -135,7 +136,7 @@ class XGBoost:
                 
         return self
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         if self.task != 'classify':
             raise ValueError("predict_proba is only for classification")
             
@@ -147,7 +148,7 @@ class XGBoost:
         p = 1 / (1 + np.exp(-F))
         return p
 
-    def predict(self, X):
+    def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> Union[pd.Series, np.ndarray]:
         X_arr = X.values if isinstance(X, pd.DataFrame) else X
         if self.task == 'classify':
             p = self.predict_proba(X)

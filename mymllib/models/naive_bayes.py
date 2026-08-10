@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from typing import Union, Any
 
 
 def _to_numpy(X):
@@ -18,7 +19,7 @@ def _log_to_prob(log_posteriors):
 
 
 class GaussianNB:
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "GaussianNB":
         """Fit Gaussian Naive Bayes model."""
         X = _to_numpy(X)
         y = _to_numpy(y)
@@ -47,12 +48,12 @@ class GaussianNB:
         eps = 1e-9
         return -0.5 * np.log(2 * np.pi * (var + eps)) - 0.5 * ((x - mean) ** 2) / (var + eps)
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class labels for samples in X."""
         probas = self.predict_proba(X)
         return self.classes[np.argmax(probas, axis=1)]
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class probabilities for samples in X."""
         X = _to_numpy(X)
         log_posteriors = np.zeros((len(X), len(self.classes)))
@@ -66,10 +67,10 @@ class GaussianNB:
 
 
 class MultinomialNB:
-    def __init__(self, alpha=1.0):
+    def __init__(self, alpha: float = 1.0) -> None:
         self.alpha = alpha
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "MultinomialNB":
         """Fit Multinomial Naive Bayes model."""
         X = _to_numpy(X)
         y = _to_numpy(y)
@@ -99,13 +100,13 @@ class MultinomialNB:
 
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class labels for samples in X."""
         X = _to_numpy(X)
         log_posteriors = self.log_priors + X @ self.feature_log_prob.T
         return self.classes[np.argmax(log_posteriors, axis=1)]
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class probabilities for samples in X."""
         X = _to_numpy(X)
         log_posteriors = self.log_priors + X @ self.feature_log_prob.T
@@ -113,10 +114,10 @@ class MultinomialNB:
 
 
 class BernoulliNB:
-    def __init__(self, alpha=1.0):
+    def __init__(self, alpha: float = 1.0) -> None:
         self.alpha = alpha
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "BernoulliNB":
         """Fit Bernoulli Naive Bayes model."""
         X = _to_numpy(X)
         y = _to_numpy(y)
@@ -147,13 +148,13 @@ class BernoulliNB:
 
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class labels for samples in X."""
         X = _to_numpy(X)
         log_posteriors = self.log_priors + X @ self.feature_log_prob.T + (1 - X) @ self.feature_log_neg_prob.T
         return self.classes[np.argmax(log_posteriors, axis=1)]
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class probabilities for samples in X."""
         X = _to_numpy(X)
         log_posteriors = self.log_priors + X @ self.feature_log_prob.T + (1 - X) @ self.feature_log_neg_prob.T

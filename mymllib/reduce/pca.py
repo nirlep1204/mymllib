@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union
 
 class PCA:
     """Principal Component Analysis."""
     
-    def __init__(self, n_components=2):
+    def __init__(self, n_components: int = 2) -> None:
         self.n_components = n_components
         self.components = None
         self.mean = None
@@ -12,7 +13,7 @@ class PCA:
         self.explained_variance = None
         self._all_eigenvalues_sum = None
 
-    def fit(self, X):
+    def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> "PCA":
         """Fit the PCA model on X."""
         X_arr = np.asarray(X, dtype=float)
         self.mean = np.mean(X_arr, axis=0)
@@ -37,7 +38,7 @@ class PCA:
         
         return self
 
-    def transform(self, X):
+    def transform(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Apply dimensionality reduction to X."""
         X_arr = np.asarray(X, dtype=float)
         X_centered = X_arr - self.mean
@@ -47,11 +48,11 @@ class PCA:
             return pd.DataFrame(X_proj, index=X.index, columns=[f"PC{i+1}" for i in range(self.n_components)])
         return X_proj
 
-    def fit_transform(self, X):
+    def fit_transform(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Fit model and apply transform to X."""
         return self.fit(X).transform(X)
 
-    def reconstruct(self, X_proj):
+    def reconstruct(self, X_proj: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Transform data back to its original space."""
         X_proj_arr = np.asarray(X_proj, dtype=float)
         X_rec = X_proj_arr @ self.components + self.mean
@@ -61,7 +62,7 @@ class PCA:
         return X_rec
 
     @property
-    def explained_variance_ratio(self):
+    def explained_variance_ratio(self) -> Optional[np.ndarray]:
         """Ratio of variance explained by each component."""
         if self.eigenvalues is None:
             return None

@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union
 
 class ICA:
     """Independent Component Analysis using FastICA."""
     
-    def __init__(self, n_components=2, max_iter=200, tol=1e-4, seed=None):
+    def __init__(self, n_components: int = 2, max_iter: int = 200, tol: float = 1e-4, seed: Optional[int] = None) -> None:
         self.n_components = n_components
         self.max_iter = max_iter
         self.tol = tol
@@ -21,7 +22,7 @@ class ICA:
         """Derivative of tanh."""
         return 1.0 - np.tanh(u)**2
 
-    def fit(self, X):
+    def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> "ICA":
         """Fit the ICA model on X."""
         if self.seed is not None:
             np.random.seed(self.seed)
@@ -75,7 +76,7 @@ class ICA:
         self.unmixing = W
         return self
 
-    def transform(self, X):
+    def transform(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Recover independent components from X."""
         X_arr = np.asarray(X, dtype=float)
         X_centered = X_arr - self.mean
@@ -86,6 +87,6 @@ class ICA:
             return pd.DataFrame(components, index=X.index, columns=[f"IC{i+1}" for i in range(self.n_components)])
         return components
 
-    def fit_transform(self, X):
+    def fit_transform(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Fit model and apply transform to X."""
         return self.fit(X).transform(X)

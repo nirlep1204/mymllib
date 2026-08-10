@@ -1,18 +1,19 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Union, List, Any
 
 class KMeans:
     """K-Means clustering algorithm."""
     
-    def __init__(self, k=3, max_iter=100, seed=None):
+    def __init__(self, k: int = 3, max_iter: int = 100, seed: Optional[int] = None) -> None:
         self.k = k
         self.max_iter = max_iter
         self.seed = seed
-        self.centers = None
-        self.labels = None
-        self.losses = []
+        self.centers: Any = None
+        self.labels: Any = None
+        self.losses: List[Any] = []
 
-    def fit(self, X):
+    def fit(self, X: Union[np.ndarray, pd.DataFrame]) -> "KMeans":
         """Fit the KMeans model to data."""
         if isinstance(X, pd.DataFrame):
             X_arr = X.to_numpy()
@@ -25,7 +26,7 @@ class KMeans:
             np.random.seed(self.seed)
             
         # Initialize k centers randomly from data points
-        idx = np.random.choice(n_samples, self.k, replace=False)
+        idx = np.random.choice(n_samples, self.k, replace=(n_samples < self.k))
         self.centers = X_arr[idx].copy()
         
         for _ in range(self.max_iter):
@@ -65,7 +66,7 @@ class KMeans:
             
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
         """Assign new points to nearest center."""
         if isinstance(X, pd.DataFrame):
             X_arr = X.to_numpy()
@@ -78,6 +79,6 @@ class KMeans:
             
         return np.argmin(distances, axis=1)
 
-    def cost(self):
+    def cost(self) -> float:
         """Return final within-cluster sum of squares (WCSS)."""
         return self.losses[-1] if self.losses else 0.0

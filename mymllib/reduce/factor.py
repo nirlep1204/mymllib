@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union
 
 class Factor:
     """Factor Analysis using EM algorithm."""
     
-    def __init__(self, n_factors=2, max_iter=100, tol=1e-6):
+    def __init__(self, n_factors: int = 2, max_iter: int = 100, tol: float = 1e-6) -> None:
         self.n_factors = n_factors
         self.max_iter = max_iter
         self.tol = tol
@@ -12,7 +13,7 @@ class Factor:
         self._loadings = None
         self.noise = None
 
-    def fit(self, X):
+    def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> "Factor":
         """Fit Factor Analysis model on X."""
         X_arr = np.asarray(X, dtype=float)
         self.mean = np.mean(X_arr, axis=0)
@@ -54,7 +55,7 @@ class Factor:
                 
         return self
 
-    def transform(self, X):
+    def transform(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Transform X to the latent space."""
         X_arr = np.asarray(X, dtype=float)
         X_c = X_arr - self.mean
@@ -69,11 +70,11 @@ class Factor:
             return pd.DataFrame(z, index=X.index, columns=[f"Factor{i+1}" for i in range(self.n_factors)])
         return z
 
-    def fit_transform(self, X):
+    def fit_transform(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> Union[pd.DataFrame, np.ndarray]:
         """Fit model and apply transform to X."""
         return self.fit(X).transform(X)
 
     @property
-    def loadings(self):
+    def loadings(self) -> np.ndarray:
         """Factor loadings matrix."""
         return self._loadings

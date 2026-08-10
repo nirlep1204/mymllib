@@ -1,21 +1,22 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union, List
 from .tree import Tree
 
 
 class Forest:
-    def __init__(self, n_trees=100, task="classify", max_depth=10, min_samples_split=2, max_features="sqrt", seed=None):
+    def __init__(self, n_trees: int = 100, task: str = "classify", max_depth: int = 10, min_samples_split: int = 2, max_features: Union[str, float, int] = "sqrt", seed: Optional[int] = None) -> None:
         self.n_trees = int(n_trees)
         self.task = task
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.max_features = max_features
         self.seed = seed
-        self.trees = []
-        self.classes = None
-        self.feature_importances_ = None
+        self.trees: List[Any] = []
+        self.classes: Optional[np.ndarray] = None
+        self.feature_importances_: Optional[np.ndarray] = None
 
-    def fit(self, X, y):
+    def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray], y: Union[pd.DataFrame, pd.Series, np.ndarray]) -> "Forest":
         """Fit random forest ensemble."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
             X_arr = X.values
@@ -68,7 +69,7 @@ class Forest:
 
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         """Predict labels/values using the ensemble."""
         if self.task == "classify":
             probas = self.predict_proba(X)
@@ -77,7 +78,7 @@ class Forest:
             preds = np.array([tree.predict(X) for tree in self.trees])
             return np.mean(preds, axis=0)
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         """Predict class probabilities by averaging tree probabilities."""
         if self.task != "classify":
             raise ValueError("predict_proba is only available for classification.")

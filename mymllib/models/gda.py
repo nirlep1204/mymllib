@@ -1,11 +1,12 @@
 import numpy as np
+from typing import Union, Optional, Any, List
 
 class GDA:
-    def __init__(self, shared_cov=True):
+    def __init__(self, shared_cov: bool = True) -> None:
         """Gaussian Discriminant Analysis."""
         self.shared_cov = shared_cov
         
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, Any], y: Union[np.ndarray, Any]) -> "GDA":
         """Fit the model to data."""
         X = np.asarray(X)
         y = np.asarray(y).ravel()
@@ -62,7 +63,7 @@ class GDA:
         log_pdf = -0.5 * (d * np.log(2 * np.pi) + logdet + md)
         return log_pdf
         
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Return class probabilities."""
         X = np.asarray(X)
         log_posteriors = []
@@ -80,7 +81,7 @@ class GDA:
         probs = exp_vals / np.sum(exp_vals, axis=1, keepdims=True)
         return probs
         
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, Any]) -> np.ndarray:
         """Predict class labels."""
         probs = self.predict_proba(X)
         idx = np.argmax(probs, axis=1)

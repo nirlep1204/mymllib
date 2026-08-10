@@ -1,23 +1,24 @@
 import numpy as np
+from typing import Optional, Any
 
 class SGD:
     """Stochastic Gradient Descent optimizer."""
     
-    def __init__(self, lr=0.01):
+    def __init__(self, lr: float = 0.01) -> None:
         self.lr = lr
         
-    def update(self, layer, t=None):
+    def update(self, layer: Any, t: Optional[int] = None) -> None:
         layer.W -= self.lr * layer.dW
         layer.b -= self.lr * layer.db
 
 class Momentum:
     """Momentum optimizer."""
     
-    def __init__(self, lr=0.01, beta=0.9):
+    def __init__(self, lr: float = 0.01, beta: float = 0.9) -> None:
         self.lr = lr
         self.beta = beta
         
-    def update(self, layer, t=None):
+    def update(self, layer: Any, t: Optional[int] = None) -> None:
         layer.v_W = self.beta * layer.v_W + (1 - self.beta) * layer.dW
         layer.v_b = self.beta * layer.v_b + (1 - self.beta) * layer.db
         
@@ -27,12 +28,12 @@ class Momentum:
 class RMSProp:
     """RMSProp optimizer."""
     
-    def __init__(self, lr=0.001, beta=0.999, eps=1e-8):
+    def __init__(self, lr: float = 0.001, beta: float = 0.999, eps: float = 1e-8) -> None:
         self.lr = lr
         self.beta = beta
         self.eps = eps
         
-    def update(self, layer, t=None):
+    def update(self, layer: Any, t: Optional[int] = None) -> None:
         layer.s_W = self.beta * layer.s_W + (1 - self.beta) * (layer.dW ** 2)
         layer.s_b = self.beta * layer.s_b + (1 - self.beta) * (layer.db ** 2)
         
@@ -42,13 +43,13 @@ class RMSProp:
 class Adam:
     """Adam optimizer."""
     
-    def __init__(self, lr=0.001, beta1=0.9, beta2=0.999, eps=1e-8):
+    def __init__(self, lr: float = 0.001, beta1: float = 0.9, beta2: float = 0.999, eps: float = 1e-8) -> None:
         self.lr = lr
         self.beta1 = beta1
         self.beta2 = beta2
         self.eps = eps
         
-    def update(self, layer, t):
+    def update(self, layer: Any, t: int) -> None:
         layer.v_W = self.beta1 * layer.v_W + (1 - self.beta1) * layer.dW
         layer.v_b = self.beta1 * layer.v_b + (1 - self.beta1) * layer.db
         

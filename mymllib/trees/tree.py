@@ -1,33 +1,34 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union, Dict, Tuple
 
 
 class Node:
-    def __init__(self, feature=None, threshold=None, left=None, right=None, value=None):
+    def __init__(self, feature: Optional[int] = None, threshold: Optional[float] = None, left: Optional['Node'] = None, right: Optional['Node'] = None, value: Optional[Any] = None) -> None:
         self.feature = feature
         self.threshold = threshold
         self.left = left
         self.right = right
         self.value = value
 
-    def is_leaf(self):
+    def is_leaf(self) -> bool:
         return self.value is not None
 
 
 class Tree:
-    def __init__(self, task="classify", max_depth=10, min_samples_split=2, min_impurity_decrease=1e-7, max_features=None, seed=None):
+    def __init__(self, task: str = "classify", max_depth: int = 10, min_samples_split: int = 2, min_impurity_decrease: float = 1e-7, max_features: Union[str, float, int, None] = None, seed: Optional[int] = None) -> None:
         self.task = task
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_impurity_decrease = min_impurity_decrease
         self.max_features = max_features
         self.seed = seed
-        self.root = None
-        self.classes = None
-        self._rng = np.random.default_rng(seed)
-        self.feature_importances_ = None
+        self.root: Optional['Node'] = None
+        self.classes: Optional[np.ndarray] = None
+        self._rng: np.random.Generator = np.random.default_rng(seed)
+        self.feature_importances_: Optional[np.ndarray] = None
 
-    def fit(self, X, y, classes=None):
+    def fit(self, X: Union[pd.DataFrame, pd.Series, np.ndarray], y: Union[pd.DataFrame, pd.Series, np.ndarray], classes: Optional[np.ndarray] = None) -> "Tree":
         """Build decision tree recursively."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
             X = X.values
@@ -155,19 +156,21 @@ class Tree:
         else:
             return np.mean(y)
 
-    def predict(self, X):
+    def predict(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> np.ndarray:
         """Predict labels/values for samples."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
             X = X.values
         X = np.asarray(X)
 
-        preds = np.array([self._traverse_tree(x, self.root) for x in X])
+        preds_list = [self._traverse_tree(x, self.root) for x in X]
         if self.task == "classify":
-            preds = np.array([p["class"] for p in preds])
+            preds = np.array([p["class"] for p in preds_list])
+        else:
+            preds = np.array(preds_list)
 
         return preds
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[pd.DataFrame, pd.Series, np.ndarray]) -> np.ndarray:
         """Predict class probabilities."""
         if self.task != "classify":
             raise ValueError("predict_proba is only available for classification.")

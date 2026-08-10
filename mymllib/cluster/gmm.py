@@ -1,21 +1,22 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Union, List, Any
 
 class GMM:
     """Gaussian Mixture Model using EM algorithm."""
     
-    def __init__(self, k=3, max_iter=100, tol=1e-6, seed=None):
+    def __init__(self, k: int = 3, max_iter: int = 100, tol: float = 1e-6, seed: Optional[int] = None) -> None:
         self.k = k
         self.max_iter = max_iter
         self.tol = tol
         self.seed = seed
-        self.weights = None
-        self.means = None
-        self.covariances = None
-        self.labels = None
-        self.losses = []
+        self.weights: Any = None
+        self.means: Any = None
+        self.covariances: Any = None
+        self.labels: Any = None
+        self.losses: List[Any] = []
         
-    def fit(self, X):
+    def fit(self, X: Union[np.ndarray, pd.DataFrame, pd.Series]) -> "GMM":
         """Fit the model to the data."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
             X_arr = X.values
@@ -97,7 +98,7 @@ class GMM:
         
         return np.exp(log_resp - log_likelihoods)
         
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, pd.DataFrame, pd.Series]) -> Union[np.ndarray, pd.Series]:
         """Return hard cluster assignments."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
             X_arr = X.values
@@ -111,7 +112,7 @@ class GMM:
             return pd.Series(labels, index=X.index, name="cluster")
         return labels
         
-    def predict_proba(self, X):
+    def predict_proba(self, X: Union[np.ndarray, pd.DataFrame, pd.Series]) -> Union[np.ndarray, pd.DataFrame]:
         """Return responsibilities matrix (soft assignments)."""
         if isinstance(X, (pd.DataFrame, pd.Series)):
             X_arr = X.values

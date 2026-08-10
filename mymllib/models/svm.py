@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from typing import Union, Optional, Any
 
 def _linear_kernel(x1, x2):
     return x1 @ x2.T
@@ -14,7 +15,7 @@ def _poly_kernel(x1, x2, degree):
     return (1 + x1 @ x2.T) ** degree
 
 class SVM:
-    def __init__(self, C=1.0, kernel='linear', gamma=None, degree=3, tol=1e-3, max_iter=1000):
+    def __init__(self, C: float = 1.0, kernel: str = 'linear', gamma: Optional[float] = None, degree: int = 3, tol: float = 1e-3, max_iter: int = 1000) -> None:
         self.C = C
         self.kernel = kernel
         self.gamma = gamma
@@ -22,12 +23,12 @@ class SVM:
         self.tol = tol
         self.max_iter = max_iter
         
-        self.alpha = None
-        self.b = 0.0
-        self.support_vectors_ = None
-        self.support_vector_labels_ = None
-        self.support_vector_alphas_ = None
-        self.classes_ = None
+        self.alpha: Any = None
+        self.b: float = 0.0
+        self.support_vectors_: Any = None
+        self.support_vector_labels_: Any = None
+        self.support_vector_alphas_: Any = None
+        self.classes_: Any = None
 
     def _get_kernel_matrix(self, X1, X2):
         if self.kernel == 'linear':
@@ -40,7 +41,7 @@ class SVM:
         else:
             raise ValueError(f"Unknown kernel: {self.kernel}")
 
-    def fit(self, X, y):
+    def fit(self, X: Union[np.ndarray, pd.DataFrame], y: Union[np.ndarray, pd.DataFrame, pd.Series]) -> "SVM":
         """Fit the SVM model using SMO."""
         if hasattr(X, 'values'):
             X = X.values
@@ -140,7 +141,7 @@ class SVM:
         
         return self
 
-    def decision_function(self, X):
+    def decision_function(self, X: Union[np.ndarray, pd.DataFrame]) -> Union[np.ndarray, pd.Series]:
         """Return raw decision values (distance from hyperplane)."""
         is_pandas = False
         index = None
@@ -160,7 +161,7 @@ class SVM:
             return pd.Series(decision, index=index)
         return decision
 
-    def predict(self, X):
+    def predict(self, X: Union[np.ndarray, pd.DataFrame]) -> Union[np.ndarray, pd.Series]:
         """Predict class labels for samples in X."""
         decision = self.decision_function(X)
         
@@ -178,6 +179,6 @@ class SVM:
             return pd.Series(y_pred, index=decision.index)
         return y_pred
 
-    def support_vectors(self):
+    def support_vectors(self) -> Optional[np.ndarray]:
         """Return the support vectors."""
         return self.support_vectors_

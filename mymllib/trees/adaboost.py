@@ -1,18 +1,19 @@
 import numpy as np
 import pandas as pd
+from typing import Optional, Any, Union, List, Dict
 from .tree import Tree
 
 class AdaBoost:
     """AdaBoost classifier."""
     
-    def __init__(self, n_rounds=50, lr=1.0):
+    def __init__(self, n_rounds: int = 50, lr: float = 1.0) -> None:
         self.n_rounds = n_rounds
         self.lr = lr
-        self.estimators = []
-        self.estimator_weights = []
-        self.classes = None
+        self.estimators: List[Any] = []
+        self.estimator_weights: List[float] = []
+        self.classes: Optional[np.ndarray] = None
 
-    def fit(self, X, y):
+    def fit(self, X: Union[pd.DataFrame, np.ndarray], y: Union[pd.Series, pd.DataFrame, np.ndarray]) -> "AdaBoost":
         X_arr = X.values if isinstance(X, pd.DataFrame) else X
         y_arr = y.values if isinstance(y, (pd.Series, pd.DataFrame)) else y
         y_arr = y_arr.ravel()
@@ -59,7 +60,7 @@ class AdaBoost:
             
         return self
 
-    def predict(self, X):
+    def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> Union[pd.Series, np.ndarray]:
         X_arr = X.values if isinstance(X, pd.DataFrame) else X
         n = len(X_arr)
         class_scores = {c: np.zeros(n) for c in self.classes}
