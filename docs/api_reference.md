@@ -79,15 +79,19 @@
 
 ---
 
-## 5. Neural Networks (`mymllib.nn`)
+## 5. Neural Networks & Autograd (`mymllib.nn`, `mymllib.autograd`)
 
-- `ml.Dense(in_size, out_size, activation='relu')`: Fully-connected layer (`'relu'`, `'sigmoid'`, `'tanh'`, `'softmax'`, `'linear'`).
+- `ml.Tensor(data, label='')`: Dynamic multidimensional autograd node wrapping NumPy arrays.
+  - Operations: `+`, `-`, `*`, `/`, `@` (matmul), `**` (power), `.sum()`, `.mean()`, `.relu()`, `.sigmoid()`, `.tanh()`
+  - Backprop: `.backward()` computes gradients across the dynamic computation graph with reverse-mode autodiff and unbroadcasting.
+- `ml.draw_dot(root)`: Generates a Graphviz computation graph showing node operations, matrix shapes (or scalar data/grad values), and labels.
+- `ml.Dense(in_size, out_size, activation='relu')`: Fully-connected layer using `Tensor` weights and biases (`'relu'`, `'sigmoid'`, `'tanh'`, `'softmax'`, `'linear'`).
 - Optimizers:
   - `ml.SGD(lr=0.01)`
   - `ml.Momentum(lr=0.01, beta=0.9)`
   - `ml.RMSProp(lr=0.001, beta=0.999)`
   - `ml.Adam(lr=0.001, beta1=0.9, beta2=0.999)`
-- `ml.Network(layers)`: Multi-Layer Perceptron.
+- `ml.Network(layers)`: Multi-Layer Perceptron container powered by dynamic autograd.
   - Methods: `fit(X, y, optimizer=None, loss=None, epochs=100, batch_size=32)`, `predict(X)`, `predict_proba(X)`
 
 ---

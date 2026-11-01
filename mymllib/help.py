@@ -471,6 +471,33 @@ _HELP = {
     },
 
     # Neural Networks
+    "tensor": {
+        "syntax": "ml.Tensor(data, label='')",
+        "description": "Multidimensional tensor node supporting automatic reverse-mode differentiation",
+        "category": "Neural Networks",
+        "example": "x = ml.Tensor([[1.0, 2.0]], label='x')\nW = ml.Tensor([[0.5], [-0.5]], label='W')\ny = (x @ W).relu()\ny.backward()\nprint('W.grad:', W.grad)",
+        "params": {
+            "data": "scalar, list, or np.ndarray of numeric values",
+            "label": "str optional - Node label for graph visualization"
+        },
+        "methods": {
+            "backward()": "Compute gradients across all ancestor nodes in computation graph.",
+            "relu()": "Apply ReLU activation element-wise.",
+            "sigmoid()": "Apply Sigmoid activation element-wise.",
+            "tanh()": "Apply Tanh activation element-wise.",
+            "sum()": "Sum all elements in tensor.",
+            "mean()": "Compute mean across all elements in tensor."
+        }
+    },
+    "draw_dot": {
+        "syntax": "ml.draw_dot(root)",
+        "description": "Render a Graphviz visualization of computation graph showing operations, shapes/values, and gradients",
+        "category": "Neural Networks",
+        "example": "x = ml.Tensor(2.0, label='x')\nw = ml.Tensor(-3.0, label='w')\ny = (x * w).tanh()\ny.backward()\nml.draw_dot(y)",
+        "params": {
+            "root": "ml.Tensor - Root tensor node (e.g. loss or output) to trace backward from"
+        }
+    },
     "network": {
         "syntax": "ml.Network(layers)",
         "description": "Multi-Layer Perceptron container for chaining dense layers and training loops",
@@ -1037,6 +1064,9 @@ def help(name=None):
             "decisiontree": "tree",
             "gradientboosting": "gradientboost",
             "mlp": "network",
+            "autograd": "tensor",
+            "drawdot": "draw_dot",
+            "graph": "draw_dot",
             "loocv": "leaveoneout",
             "gridsearch": "gridsearchcv",
             "randomsearch": "randomsearchcv",

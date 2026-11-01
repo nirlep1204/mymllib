@@ -67,9 +67,11 @@ ml.help('forest')
 - `Forest` (Random Forest), `Bag` (Bagging)
 - `AdaBoost`, `GradientBoost`, `XGBoost`
 
-### Neural Networks
-- `Network` + `Dense` layers with manual backprop
-- Activations: ReLU, Sigmoid, Tanh, Softmax
+### Neural Networks & Autograd
+- **Autograd Engine**: Vectorized, dynamic computational graph (`Tensor`) with automatic reverse-mode autodiff. Supports arbitrary architectures (including residual/skip connections) and broadcasting.
+- **Graph Visualization**: `draw_dot` builds Graphviz computational graphs inline in Jupyter notebooks or exports to SVG/PNG, displaying matrix shapes or scalar values/gradients.
+- `Network` + `Dense` layers powered dynamically by `Tensor` autograd.
+- Activations: ReLU, Sigmoid, Tanh, Softmax, Linear
 - Optimizers: SGD, Momentum, RMSProp, Adam
 
 ### Evaluation & Tuning
@@ -115,6 +117,7 @@ mymllib/
 │   ├── cluster/        # unsupervised clustering
 │   ├── reduce/         # dimensionality reduction (PCA, ICA, Factor)
 │   ├── nn/             # neural network framework
+│   ├── autograd.py     # tensor autograd engine & computation graph visualization
 │   ├── metrics/        # evaluation metrics
 │   ├── validation/     # cross-validation and hyperparameter search
 │   ├── plot/           # visualization utilities
