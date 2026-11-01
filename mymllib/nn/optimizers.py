@@ -8,8 +8,8 @@ class SGD:
         self.lr = lr
         
     def update(self, layer: Any, t: Optional[int] = None) -> None:
-        layer.W -= self.lr * layer.dW
-        layer.b -= self.lr * layer.db
+        layer.W.data -= self.lr * layer.W.grad
+        layer.b.data -= self.lr * layer.b.grad
 
 class Momentum:
     """Momentum optimizer."""
@@ -19,11 +19,11 @@ class Momentum:
         self.beta = beta
         
     def update(self, layer: Any, t: Optional[int] = None) -> None:
-        layer.v_W = self.beta * layer.v_W + (1 - self.beta) * layer.dW
-        layer.v_b = self.beta * layer.v_b + (1 - self.beta) * layer.db
+        layer.v_W = self.beta * layer.v_W + (1 - self.beta) * layer.W.grad
+        layer.v_b = self.beta * layer.v_b + (1 - self.beta) * layer.b.grad
         
-        layer.W -= self.lr * layer.v_W
-        layer.b -= self.lr * layer.v_b
+        layer.W.data -= self.lr * layer.v_W
+        layer.b.data -= self.lr * layer.v_b
 
 class RMSProp:
     """RMSProp optimizer."""
@@ -34,11 +34,11 @@ class RMSProp:
         self.eps = eps
         
     def update(self, layer: Any, t: Optional[int] = None) -> None:
-        layer.s_W = self.beta * layer.s_W + (1 - self.beta) * (layer.dW ** 2)
-        layer.s_b = self.beta * layer.s_b + (1 - self.beta) * (layer.db ** 2)
+        layer.s_W = self.beta * layer.s_W + (1 - self.beta) * (layer.W.grad ** 2)
+        layer.s_b = self.beta * layer.s_b + (1 - self.beta) * (layer.b.grad ** 2)
         
-        layer.W -= self.lr * layer.dW / (np.sqrt(layer.s_W) + self.eps)
-        layer.b -= self.lr * layer.db / (np.sqrt(layer.s_b) + self.eps)
+        layer.W.data -= self.lr * layer.W.grad / (np.sqrt(layer.s_W) + self.eps)
+        layer.b.data -= self.lr * layer.b.grad / (np.sqrt(layer.s_b) + self.eps)
 
 class Adam:
     """Adam optimizer."""
@@ -50,11 +50,11 @@ class Adam:
         self.eps = eps
         
     def update(self, layer: Any, t: int) -> None:
-        layer.v_W = self.beta1 * layer.v_W + (1 - self.beta1) * layer.dW
-        layer.v_b = self.beta1 * layer.v_b + (1 - self.beta1) * layer.db
+        layer.v_W = self.beta1 * layer.v_W + (1 - self.beta1) * layer.W.grad
+        layer.v_b = self.beta1 * layer.v_b + (1 - self.beta1) * layer.b.grad
         
-        layer.s_W = self.beta2 * layer.s_W + (1 - self.beta2) * (layer.dW ** 2)
-        layer.s_b = self.beta2 * layer.s_b + (1 - self.beta2) * (layer.db ** 2)
+        layer.s_W = self.beta2 * layer.s_W + (1 - self.beta2) * (layer.W.grad ** 2)
+        layer.s_b = self.beta2 * layer.s_b + (1 - self.beta2) * (layer.b.grad ** 2)
         
         # Bias correction
         v_W_corr = layer.v_W / (1 - self.beta1 ** t)
@@ -63,5 +63,5 @@ class Adam:
         s_W_corr = layer.s_W / (1 - self.beta2 ** t)
         s_b_corr = layer.s_b / (1 - self.beta2 ** t)
         
-        layer.W -= self.lr * v_W_corr / (np.sqrt(s_W_corr) + self.eps)
-        layer.b -= self.lr * v_b_corr / (np.sqrt(s_b_corr) + self.eps)
+        layer.W.data -= self.lr * v_W_corr / (np.sqrt(s_W_corr) + self.eps)
+        layer.b.data -= self.lr * v_b_corr / (np.sqrt(s_b_corr) + self.eps)

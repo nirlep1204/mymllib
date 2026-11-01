@@ -84,5 +84,8 @@ from .plot.plots import (
     scatter,
 )
 
+# Autograd & Tensors
+from .autograd import Tensor, draw_dot
+
 # Interactive Help
 from .help import help
